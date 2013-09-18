@@ -1,0 +1,37 @@
+name: DrakonnasJumper
+main: com.comze_instancelabs.simplejumpnrun.Main
+version: 1.0
+author: instancelabs
+softdepend: [Vault]
+permissions:
+  jumper.*:
+    description: Gives access to all jumper commands.
+    children:
+      jumper.sign: true
+      jumper.create: true
+      jumper.setspawn: true
+      jumper.setlobby: true
+      jumper.list: true
+      jumper.reload: true
+      jumper.remove: true
+  jumper.sign:
+    description: Gives access to create signs for joining games.
+  jumper.create:
+    description: Gives access to the creation of courses.
+  jumper.setspawn:
+    description: Gives access to set the spawns.
+  jumper.setlobby:
+    description: Gives access to set the lobby.
+  jumper.remove:
+    description: Gives access to remove the course. 
+  jumper.list:
+    description: Gives access to listing all courses. 
+  jumper.reload:
+    description: Gives access to reloading the configuration. 
+commands:
+   jumper:
+      description: Main command
+      usage: /jumper [name]
+   j:
+      description: Main command
+      usage: /j [name]
