@@ -9,7 +9,6 @@ package com.comze_instancelabs.simplejumpnrun;
  *
  */
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -20,12 +19,9 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.World;
-import org.bukkit.block.BlockState;
 import org.bukkit.block.Sign;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Boat;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -37,27 +33,23 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scheduler.BukkitTask;
+import org.bukkit.scoreboard.DisplaySlot;
+import org.bukkit.scoreboard.Objective;
+import org.bukkit.scoreboard.Score;
+import org.bukkit.scoreboard.Scoreboard;
+import org.bukkit.scoreboard.ScoreboardManager;
 
-import com.sk89q.worldguard.bukkit.WGBukkit;
-import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
-import com.sk89q.worldguard.domains.DefaultDomain;
-import com.sk89q.worldguard.protection.ApplicableRegionSet;
-import com.sk89q.worldguard.protection.databases.ProtectionDatabaseException;
-import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 
 public class Main extends JavaPlugin implements Listener{
 	
 	
 	public static Economy econ = null;
 	public boolean economy = false;
-	
-	WorldGuardPlugin worldGuard = null;
+
+	public static HashMap<Player, Location> checkpoints = new HashMap<Player, Location>();
+	public static HashMap<Player, String> checkpointsarena= new HashMap<Player, String>();
 	
 	
 	static HashMap<Player, String> arenap = new HashMap<Player, String>(); // playername -> arenaname
@@ -67,28 +59,24 @@ public class Main extends JavaPlugin implements Listener{
 	@Override
 	public void onEnable(){
 		getServer().getPluginManager().registerEvents(this, this);
-		worldGuard = (WorldGuardPlugin) getWorldGuard();
 		
-		getConfig().addDefault("config.use_points", true);
-		getConfig().addDefault("config.use_economy", false);
+		getConfig().addDefault("config.use_economy", true);
 		getConfig().addDefault("config.moneyreward_amount", 20.0);
 		getConfig().addDefault("config.itemid", 264);
 		getConfig().addDefault("config.itemamount", 1);
-		getConfig().addDefault("config.auto_updating", true);
-		getConfig().addDefault("config.cooldown", 24);
 		
 		getConfig().addDefault("strings.nopermission", "§4You don't have permission!");
-		getConfig().addDefault("strings.createcourse", "§2Course saved. Now create a spawn and a lobby. :)");
+		getConfig().addDefault("strings.createcourse", "§2Course saved. Now create a spawn. :)");
 		getConfig().addDefault("strings.help1", "§2Jumper help:");
 		getConfig().addDefault("strings.help2", "§2Use '/j createcourse <name>' to create a new course.");
-		getConfig().addDefault("strings.help3", "§2Use '/j setlobby <name>' to set the lobby for an course.");
+		getConfig().addDefault("strings.help3", "§2Use '/j setmainlobby' to set the main lobby.");
 		getConfig().addDefault("strings.help4", "§2Use '/j setspawn <name>' to set a new course spawn.");
 		getConfig().addDefault("strings.lobbycreated", "§2Lobby successfully created!");
 		getConfig().addDefault("strings.spawn", "§2Spawnpoint registered.");
 		getConfig().addDefault("strings.courseremoved", "§4Course removed.");
 		getConfig().addDefault("strings.reload", "§2Jumper config successfully reloaded.");
 		getConfig().addDefault("strings.nothing", "§4This command action was not found.");
-		getConfig().addDefault("strings.ingame", "§eYou are not able to use any commands while in this minigame. You can use /j leave or /jumper leave if you want to leave the minigame.");
+		getConfig().addDefault("strings.ingame", "§cUse /j leave to leave the course. Use /cp to get back to your last checkpoint.");
 		getConfig().addDefault("strings.left", "§eYou left the course!");
 		
 		
@@ -104,10 +92,6 @@ public class Main extends JavaPlugin implements Listener{
 		getConfig().options().copyDefaults(true);
 		this.saveConfig();
 	}
-	
-	public Plugin getWorldGuard(){
-    	return Bukkit.getPluginManager().getPlugin("WorldGuard");
-    }
 
 
 	private boolean setupEconomy() {
@@ -143,15 +127,14 @@ public class Main extends JavaPlugin implements Listener{
 	    	    			String arenaname = args[1];
 	    	    			sender.sendMessage(getConfig().getString("strings.createcourse"));
     					}
-    				}else if(action.equalsIgnoreCase("setlobby") && args.length > 1){
+    				}else if(action.equalsIgnoreCase("setmainlobby")){
     					// setlobby
     					if(p.hasPermission("jumper.setlobby")){
-    						String arena = args[1];
 	    		    		Location l = p.getLocation();
-	    		    		getConfig().set(args[1] + ".lobbyspawn.x", (int)l.getX());
-	    		    		getConfig().set(args[1] + ".lobbyspawn.y", (int)l.getY());
-	    		    		getConfig().set(args[1] + ".lobbyspawn.z", (int)l.getZ());
-	    		    		getConfig().set(args[1] + ".lobbyspawn.world", p.getWorld().getName());
+	    		    		getConfig().set("lobbyspawn.x", (int)l.getX());
+	    		    		getConfig().set("lobbyspawn.y", (int)l.getY());
+	    		    		getConfig().set("lobbyspawn.z", (int)l.getZ());
+	    		    		getConfig().set("lobbyspawn.world", p.getWorld().getName());
 	    		    		this.saveConfig();
 	    		    		sender.sendMessage(getConfig().getString("strings.lobbycreated"));
     					}
@@ -179,12 +162,14 @@ public class Main extends JavaPlugin implements Listener{
     					//if(p.hasPermission("jumper.leave")){
     					if(arenap.containsKey(p)){
     						String arena = arenap.get(p);
-    						final Location t = new Location(Bukkit.getWorld(getConfig().getString(arena + ".lobbyspawn.world")), getConfig().getDouble(arena + ".lobbyspawn.x"), getConfig().getDouble(arena + ".lobbyspawn.y"), getConfig().getDouble(arena + ".lobbyspawn.z"));
+    						final Location t = new Location(Bukkit.getWorld(getConfig().getString("lobbyspawn.world")), getConfig().getDouble("lobbyspawn.x"), getConfig().getDouble("lobbyspawn.y"), getConfig().getDouble("lobbyspawn.z"));
                 			p.teleport(t);
                 			arenap.remove(p);
+                			checkpoints.remove(p);
+                			checkpointsarena.remove(p);
                 			p.sendMessage(getConfig().getString("strings.left"));
     					}else{
-    						p.sendMessage("§2You don't seem to be in a course right now!");
+    						p.sendMessage("§aYou don't seem to be in a course right now!");
     					}
     					//}
     				}else if(action.equalsIgnoreCase("list")){
@@ -195,8 +180,9 @@ public class Main extends JavaPlugin implements Listener{
 	    			        try{
 	    			        	keys.remove("config");
 	    			        	keys.remove("strings");
+	    			        	keys.remove("lobbyspawn");
 	    			        }catch(Exception e){
-	    			        	
+	    			        	// do nothing
 	    			        }
 	    			        for(int i = 0; i < keys.size(); i++){
 	    			        	if(!keys.get(i).equalsIgnoreCase("config") && !keys.get(i).equalsIgnoreCase("strings")){
@@ -217,6 +203,26 @@ public class Main extends JavaPlugin implements Listener{
     			}
     		}
     		return true;
+    	}else if(cmd.getName().equalsIgnoreCase("cp")){
+    		if(sender instanceof Player){
+    			final Player p = (Player)sender;
+    			if(!arenap.containsKey(p)){
+    				if(checkpointsarena.containsKey(p)){
+    					arenap.put(p, checkpointsarena.get(p));
+    				}
+    			}
+	    		if(checkpoints.containsKey(p)){
+	    			Bukkit.getScheduler().runTaskLater(this, new Runnable(){
+	    				public void run() {
+	    					p.teleport(checkpoints.get(p));
+	    					p.sendMessage("§7You were teleported to your checkpoint.");
+	    				}
+	    			}, 5L);
+	    		}else{ 
+	    			p.sendMessage("§cI can't find any checkpoints in my memory.. sowwy >.<");
+	    		}
+    		}
+    		return true;
     	}
     	return false;
     }
@@ -232,7 +238,6 @@ public class Main extends JavaPlugin implements Listener{
 	@EventHandler
     public void onPlayerDeath(PlayerDeathEvent event){
 		Player p = event.getEntity();
-		tpthem.put(p, arenap.get(p));
 		arenap.remove(p);
 	}
 	
@@ -242,9 +247,10 @@ public class Main extends JavaPlugin implements Listener{
 		if(tpthem.containsKey(event.getPlayer())){
 			String arena = tpthem.get(event.getPlayer());
 			Player p = event.getPlayer();
-			final Location t = new Location(Bukkit.getWorld(getConfig().getString(arena + ".lobbyspawn.world")), getConfig().getDouble(arena + ".lobbyspawn.x"), getConfig().getDouble(arena + ".lobbyspawn.y"), getConfig().getDouble(arena + ".lobbyspawn.z"));
+			final Location t = new Location(Bukkit.getWorld(getConfig().getString("lobbyspawn.world")), getConfig().getDouble("lobbyspawn.x"), getConfig().getDouble("lobbyspawn.y"), getConfig().getDouble("lobbyspawn.z"));
 			p.teleport(t);
 		}
+		updateScoreboard();
 	}
 	
 	
@@ -259,7 +265,7 @@ public class Main extends JavaPlugin implements Listener{
 	            if(getConfig().contains("player." + event.getPlayer().getName())){
 	            	//TODO get date and if 24h cooldown true or false
 	            }
-                if (s.getLine(0).equalsIgnoreCase("§2[jumper]"))
+                if (s.getLine(0).equalsIgnoreCase("§lJumper"))
                 {
                 	String arena = s.getLine(1);
                 	arena = arena.substring(2);
@@ -267,35 +273,32 @@ public class Main extends JavaPlugin implements Listener{
                 	
                 	arenap.put(event.getPlayer(), arena);
                 	
-                	event.getPlayer().sendMessage("§2You have entered the parkour minigame!");
+                	event.getPlayer().sendMessage("§7You have entered " + arena + "!");
                 	
                 	final Location t = new Location(Bukkit.getWorld(getConfig().getString(arena + ".spawn.world")), getConfig().getDouble(arena + ".spawn.x"), getConfig().getDouble(arena + ".spawn.y"), getConfig().getDouble(arena + ".spawn.z"));
         			event.getPlayer().teleport(t);
                 }else if(s.getLine(0).equalsIgnoreCase("§2[reward]")){
                 	if(arenap.containsKey(event.getPlayer())){
-	                	if(getConfig().getBoolean("config.use_economy")){
-	                		EconomyResponse r = econ.depositPlayer(event.getPlayer().getName(), getConfig().getDouble("config.moneyreward_amount"));
-	            			if(!r.transactionSuccess()) {
-	            				event.getPlayer().sendMessage(String.format("An error occured: %s", r.errorMessage));
-	                            //sender.sendMessage(String.format("You were given %s and now have %s", econ.format(r.amount), econ.format(r.balance)));
-	                        }
-	                	}else{
-	                		if(getConfig().getBoolean("config.use_points")){
-	                			getServer().dispatchCommand(getServer().getConsoleSender(), "enjin addpoints " + event.getPlayer().getName() + " " + s.getLine(1));
-	                		}else{
-		                		event.getPlayer().getInventory().addItem(new ItemStack(Material.getMaterial(getConfig().getInt("config.itemid")), getConfig().getInt("config.itemamount")));
-		                		event.getPlayer().updateInventory();
-	                		}
-	                		
-	                	}
-	                	event.getPlayer().sendMessage("§2Congratulations you beat the course, here's your reward!");
+                		EconomyResponse r = econ.depositPlayer(event.getPlayer().getName(), Double.parseDouble(s.getLine(1)));
+            			if(!r.transactionSuccess()) {
+            				event.getPlayer().sendMessage(String.format("An error occured: %s", r.errorMessage));
+                            //sender.sendMessage(String.format("You were given %s and now have %s", econ.format(r.amount), econ.format(r.balance)));
+                        }
+	                	event.getPlayer().sendMessage("§7Congratulations you beat the course, here's your reward!");
 	                	Player p = event.getPlayer();
 	                	String arena = arenap.get(p);
-						final Location t = new Location(Bukkit.getWorld(getConfig().getString(arena + ".lobbyspawn.world")), getConfig().getDouble(arena + ".lobbyspawn.x"), getConfig().getDouble(arena + ".lobbyspawn.y"), getConfig().getDouble(arena + ".lobbyspawn.z"));
+						final Location t = new Location(Bukkit.getWorld(getConfig().getString("lobbyspawn.world")), getConfig().getDouble("lobbyspawn.x"), getConfig().getDouble("lobbyspawn.y"), getConfig().getDouble("lobbyspawn.z"));
             			p.teleport(t);
             			arenap.remove(p);
+            			
+            			updateScoreboard();
                 	}
-                	
+                }else if(s.getLine(0).equalsIgnoreCase("§6§l[checkpoint]")){
+                	if(arenap.containsKey(event.getPlayer())){
+                		checkpoints.put(event.getPlayer(), event.getPlayer().getLocation());
+                		checkpointsarena.put(event.getPlayer(), arenap.get(event.getPlayer()));
+                		event.getPlayer().sendMessage("§aSuccessfully set checkpoint.");
+                	}
                 }
 	        }
 	    }
@@ -307,7 +310,7 @@ public class Main extends JavaPlugin implements Listener{
         Player p = event.getPlayer();
         if(event.getLine(0).toLowerCase().contains("[jumper]")){
         	if(event.getPlayer().hasPermission("jumper.sign")){
-	        	event.setLine(0, "§2[Jumper]");
+	        	event.setLine(0, "§lJumper");
 	        	if(!event.getLine(1).equalsIgnoreCase("")){
 	        		String arena = event.getLine(1);
 	        		event.setLine(1, "§5" +  arena);
@@ -317,6 +320,14 @@ public class Main extends JavaPlugin implements Listener{
         	if(event.getPlayer().hasPermission("jumper.sign")){
 	        	event.setLine(0, "§2[Reward]");
 	        	event.getPlayer().sendMessage("§2You have successfully created a reward sign for jumper!");
+        	}
+        }else if(event.getLine(0).toLowerCase().contains("[cp]")){
+        	if(event.getPlayer().hasPermission("jumper.sign")){
+	        	event.setLine(0, "§6§l[Checkpoint]");
+	        	event.setLine(1, "Click for");
+	        	event.setLine(2, "Checkpoint!");
+	        	event.setLine(3, "/cp to use.");
+	        	event.getPlayer().sendMessage("§2You have successfully created a checkpoint sign for jumper!");
         	}
         }
 	}
@@ -347,13 +358,43 @@ public class Main extends JavaPlugin implements Listener{
 	public void onPlayerCommand(PlayerCommandPreprocessEvent event){
 		if(arenap.containsKey(event.getPlayer())){
 			// j leave
-			if(event.getMessage().equalsIgnoreCase("/j leave") || event.getMessage().equalsIgnoreCase("/jumper leave")){
+			if(event.getMessage().equalsIgnoreCase("/j leave") || event.getMessage().equalsIgnoreCase("/jumper leave") || event.getMessage().equalsIgnoreCase("/cp")){
 				// nothing
 			}else{
 				event.setCancelled(true);
 				event.getPlayer().sendMessage(getConfig().getString("strings.ingame"));
 			}
 		}
+	}
+	
+	
+	public void updateScoreboard(){
+		ScoreboardManager manager = Bukkit.getScoreboardManager();
+	    
+	    
+	    for(Player p : Bukkit.getOnlinePlayers()){
+	    	Scoreboard board = manager.getNewScoreboard();
+	    	
+	    	Objective objective = board.registerNewObjective("test", "dummy");
+	        objective.setDisplaySlot(DisplaySlot.SIDEBAR);
+
+	        objective.setDisplayName("§l§7SeekCraft!");
+	        
+	        
+	        objective.getScore(Bukkit.getOfflinePlayer("§l§9MONEY:")).setScore(10);
+	        objective.getScore(Bukkit.getOfflinePlayer("" + (int)Math.round(econ.getBalance(p.getName())))).setScore(9);
+	        objective.getScore(Bukkit.getOfflinePlayer("  ")).setScore(8);
+	        objective.getScore(Bukkit.getOfflinePlayer("§l§aONLINE:")).setScore(7);
+	        objective.getScore(Bukkit.getOfflinePlayer("" + getServer().getOnlinePlayers().length)).setScore(6);
+	        objective.getScore(Bukkit.getOfflinePlayer(" ")).setScore(5);
+	        objective.getScore(Bukkit.getOfflinePlayer("§l§eGame Types")).setScore(4);
+	        objective.getScore(Bukkit.getOfflinePlayer("§c/survival")).setScore(3);
+	        objective.getScore(Bukkit.getOfflinePlayer("§c/creative")).setScore(2);
+	        objective.getScore(Bukkit.getOfflinePlayer("§c/minigames")).setScore(1);
+	        objective.getScore(Bukkit.getOfflinePlayer("§c/jump")).setScore(0);
+	        
+	        p.setScoreboard(board);
+	    }
 	}
 	
 }

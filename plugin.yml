@@ -1,4 +1,4 @@
-name: DrakonnasJumper
+name: Jumper
 main: com.comze_instancelabs.simplejumpnrun.Main
 version: 1.0
 author: instancelabs
@@ -35,3 +35,6 @@ commands:
    j:
       description: Main command
       usage: /j [name]
+   cp:
+      description: Main checkpoint command
+      usage: /cp
