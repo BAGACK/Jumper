@@ -291,11 +291,13 @@ public class Main extends JavaPlugin implements Listener{
 	                	String arena = arenap.get(p);
 						final Location t = new Location(Bukkit.getWorld(getConfig().getString("lobbyspawn.world")), getConfig().getDouble("lobbyspawn.x"), getConfig().getDouble("lobbyspawn.y"), getConfig().getDouble("lobbyspawn.z"));
             			p.teleport(t);
+            			getConfig().set("players." + event.getPlayer().getName() + "." + arena, "done");
+            			this.saveConfig();
             			arenap.remove(p);
             			
             			updateScoreboard();
                 	}
-                }else if(s.getLine(0).equalsIgnoreCase("§6§l[checkpoint]")){
+                }else if(s.getLine(0).toLowerCase().contains("[checkpoint]")){
                 	if(arenap.containsKey(event.getPlayer())){
                 		checkpoints.put(event.getPlayer(), event.getPlayer().getLocation());
                 		checkpointsarena.put(event.getPlayer(), arenap.get(event.getPlayer()));
@@ -375,6 +377,7 @@ public class Main extends JavaPlugin implements Listener{
 	public void updateScoreboard(){
 		ScoreboardManager manager = Bukkit.getScoreboardManager();
 	    
+		String c = Integer.toString(getArenaCount());
 	    
 	    for(Player p : Bukkit.getOnlinePlayers()){
 	    	Scoreboard board = manager.getNewScoreboard();
@@ -385,20 +388,53 @@ public class Main extends JavaPlugin implements Listener{
 	        objective.setDisplayName("§l§7SeekCraft!");
 	        
 	        
-	        objective.getScore(Bukkit.getOfflinePlayer("§l§9MONEY:")).setScore(10);
-	        objective.getScore(Bukkit.getOfflinePlayer("" + (int)Math.round(econ.getBalance(p.getName())))).setScore(9);
-	        objective.getScore(Bukkit.getOfflinePlayer("  ")).setScore(8);
-	        objective.getScore(Bukkit.getOfflinePlayer("§l§aONLINE:")).setScore(7);
-	        objective.getScore(Bukkit.getOfflinePlayer("" + getServer().getOnlinePlayers().length)).setScore(6);
-	        objective.getScore(Bukkit.getOfflinePlayer(" ")).setScore(5);
-	        objective.getScore(Bukkit.getOfflinePlayer("§l§eGame Types")).setScore(4);
-	        objective.getScore(Bukkit.getOfflinePlayer("§c/survival")).setScore(3);
-	        objective.getScore(Bukkit.getOfflinePlayer("§c/creative")).setScore(2);
-	        objective.getScore(Bukkit.getOfflinePlayer("§c/minigames")).setScore(1);
-	        objective.getScore(Bukkit.getOfflinePlayer("§c/jump")).setScore(0);
+	        objective.getScore(Bukkit.getOfflinePlayer("§l§9MONEY:")).setScore(20);
+	        objective.getScore(Bukkit.getOfflinePlayer("" + (int)Math.round(econ.getBalance(p.getName())))).setScore(19);
+	        objective.getScore(Bukkit.getOfflinePlayer("  ")).setScore(18);
+	        objective.getScore(Bukkit.getOfflinePlayer("§l§aONLINE:")).setScore(17);
+	        objective.getScore(Bukkit.getOfflinePlayer("" + getServer().getOnlinePlayers().length)).setScore(16);
+	        objective.getScore(Bukkit.getOfflinePlayer(" ")).setScore(15);
+	        objective.getScore(Bukkit.getOfflinePlayer("§l§eGame Types")).setScore(14);
+	        objective.getScore(Bukkit.getOfflinePlayer("§c/survival")).setScore(13);
+	        objective.getScore(Bukkit.getOfflinePlayer("§c/creative")).setScore(12);
+	        objective.getScore(Bukkit.getOfflinePlayer("§c/minigames")).setScore(11);
+	        objective.getScore(Bukkit.getOfflinePlayer("§c/jump")).setScore(10);
+	        objective.getScore(Bukkit.getOfflinePlayer("   ")).setScore(9);
+	        objective.getScore(Bukkit.getOfflinePlayer("§l§aJUMP MAPS:")).setScore(8);
+	        objective.getScore(Bukkit.getOfflinePlayer(Integer.toString(getPlayerArenaCount(p.getName())) + "/" + c)).setScore(7);
 	        
 	        p.setScoreboard(board);
 	    }
 	}
 	
+	
+	public int getArenaCount(){
+		int count = 0;
+		ArrayList<String> keys = new ArrayList<String>();
+        keys.addAll(getConfig().getKeys(false));
+        try{
+        	keys.remove("config");
+        	keys.remove("strings");
+        	keys.remove("lobbyspawn");
+        	keys.remove("players");
+        }catch(Exception e){
+        	// do nothing
+        }
+        for(int i = 0; i < keys.size(); i++){
+        	if(!keys.get(i).equalsIgnoreCase("config") && !keys.get(i).equalsIgnoreCase("strings") && !keys.get(i).equalsIgnoreCase("lobbyspawn") && !keys.get(i).equalsIgnoreCase("players")){
+        		count += 1;
+        	}
+        }
+        return count;
+	}
+	
+	public int getPlayerArenaCount(String p){
+		int count = 0;
+		if(getConfig().isSet("players." + p)){
+			for(String key : getConfig().getConfigurationSection("players." + p).getKeys(false)){
+				count += 1;
+			}
+		}
+		return count;
+	}
 }
