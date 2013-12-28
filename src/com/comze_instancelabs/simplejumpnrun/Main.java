@@ -233,6 +233,8 @@ public class Main extends JavaPlugin implements Listener{
 		Player p = event.getPlayer();
 		tpthem.put(p, arenap.get(p));
 		arenap.remove(p);
+		
+		updateScoreboard();
 	}
 	
 	@EventHandler
@@ -298,6 +300,8 @@ public class Main extends JavaPlugin implements Listener{
                 		checkpoints.put(event.getPlayer(), event.getPlayer().getLocation());
                 		checkpointsarena.put(event.getPlayer(), arenap.get(event.getPlayer()));
                 		event.getPlayer().sendMessage("§aSuccessfully set checkpoint.");
+                	}else{
+                		
                 	}
                 }
 	        }
