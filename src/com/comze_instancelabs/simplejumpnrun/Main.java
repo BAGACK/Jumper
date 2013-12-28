@@ -65,19 +65,19 @@ public class Main extends JavaPlugin implements Listener{
 		getConfig().addDefault("config.itemid", 264);
 		getConfig().addDefault("config.itemamount", 1);
 		
-		getConfig().addDefault("strings.nopermission", "§4You don't have permission!");
-		getConfig().addDefault("strings.createcourse", "§2Course saved. Now create a spawn. :)");
-		getConfig().addDefault("strings.help1", "§2Jumper help:");
-		getConfig().addDefault("strings.help2", "§2Use '/j createcourse <name>' to create a new course.");
-		getConfig().addDefault("strings.help3", "§2Use '/j setmainlobby' to set the main lobby.");
-		getConfig().addDefault("strings.help4", "§2Use '/j setspawn <name>' to set a new course spawn.");
-		getConfig().addDefault("strings.lobbycreated", "§2Lobby successfully created!");
-		getConfig().addDefault("strings.spawn", "§2Spawnpoint registered.");
-		getConfig().addDefault("strings.courseremoved", "§4Course removed.");
-		getConfig().addDefault("strings.reload", "§2Jumper config successfully reloaded.");
-		getConfig().addDefault("strings.nothing", "§4This command action was not found.");
-		getConfig().addDefault("strings.ingame", "§cUse /j leave to leave the course. Use /cp to get back to your last checkpoint.");
-		getConfig().addDefault("strings.left", "§eYou left the course!");
+		getConfig().addDefault("strings.nopermission", "&4You don't have permission!");
+		getConfig().addDefault("strings.createcourse", "&2Course saved. Now create a spawn. :)");
+		getConfig().addDefault("strings.help1", "&2Jumper help:");
+		getConfig().addDefault("strings.help2", "&2Use '/j createcourse <name>' to create a new course.");
+		getConfig().addDefault("strings.help3", "&2Use '/j setmainlobby' to set the main lobby.");
+		getConfig().addDefault("strings.help4", "&2Use '/j setspawn <name>' to set a new course spawn.");
+		getConfig().addDefault("strings.lobbycreated", "&2Lobby successfully created!");
+		getConfig().addDefault("strings.spawn", "&2Spawnpoint registered.");
+		getConfig().addDefault("strings.courseremoved", "&4Course removed.");
+		getConfig().addDefault("strings.reload", "&2Jumper config successfully reloaded.");
+		getConfig().addDefault("strings.nothing", "&4This command action was not found.");
+		getConfig().addDefault("strings.ingame", "&cUse /j leave to leave the course. Use /cp to get back to your last checkpoint.");
+		getConfig().addDefault("strings.left", "&eYou left the course!");
 		
 		
 		if(getConfig().getBoolean("config.use_economy")){
@@ -110,10 +110,10 @@ public class Main extends JavaPlugin implements Listener{
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args){
 		if(cmd.getName().equalsIgnoreCase("j") || cmd.getName().equalsIgnoreCase("jumper")){
     		if(args.length < 1){
-    			sender.sendMessage(getConfig().getString("strings.help1"));
-    			sender.sendMessage(getConfig().getString("strings.help2"));
-    			sender.sendMessage(getConfig().getString("strings.help3"));
-    			sender.sendMessage(getConfig().getString("strings.help4"));
+    			sender.sendMessage(getConfig().getString("strings.help1").replace("&", "§"));
+    			sender.sendMessage(getConfig().getString("strings.help2").replace("&", "§"));
+    			sender.sendMessage(getConfig().getString("strings.help3").replace("&", "§"));
+    			sender.sendMessage(getConfig().getString("strings.help4").replace("&", "§"));
     		}else{
     			Player p = (Player)sender;
     			if(args.length > 0){
@@ -125,7 +125,7 @@ public class Main extends JavaPlugin implements Listener{
 	    	    			this.getConfig().set(args[1] + ".world", p.getWorld().getName());
 	    	    			this.saveConfig();
 	    	    			String arenaname = args[1];
-	    	    			sender.sendMessage(getConfig().getString("strings.createcourse"));
+	    	    			sender.sendMessage(getConfig().getString("strings.createcourse").replace("&", "§"));
     					}
     				}else if(action.equalsIgnoreCase("setmainlobby")){
     					// setlobby
@@ -136,7 +136,7 @@ public class Main extends JavaPlugin implements Listener{
 	    		    		getConfig().set("lobbyspawn.z", (int)l.getZ());
 	    		    		getConfig().set("lobbyspawn.world", p.getWorld().getName());
 	    		    		this.saveConfig();
-	    		    		sender.sendMessage(getConfig().getString("strings.lobbycreated"));
+	    		    		sender.sendMessage(getConfig().getString("strings.lobbycreated").replace("&", "§"));
     					}
     				}else if(action.equalsIgnoreCase("setspawn") && args.length > 1){
     					// setspawn
@@ -148,14 +148,14 @@ public class Main extends JavaPlugin implements Listener{
     			    		getConfig().set(args[1] + ".spawn.z", (int)l.getZ());
     			    		getConfig().set(args[1] + ".spawn.world", p.getWorld().getName());
     			    		this.saveConfig();
-    			    		sender.sendMessage(getConfig().getString("strings.spawn"));
+    			    		sender.sendMessage(getConfig().getString("strings.spawn").replace("&", "§"));
     					}
     				}else if(action.equalsIgnoreCase("removecourse") && args.length > 1){
     					// removearena
     					if(p.hasPermission("jumper.remove")){
     						this.getConfig().set(args[1], null);
 	    	    			this.saveConfig();
-	    	    			sender.sendMessage(getConfig().getString("strings.courseremoved"));
+	    	    			sender.sendMessage(getConfig().getString("strings.courseremoved").replace("&", "§"));
     					}
     				}else if(action.equalsIgnoreCase("leave")){
     					// leave
@@ -167,7 +167,7 @@ public class Main extends JavaPlugin implements Listener{
                 			arenap.remove(p);
                 			checkpoints.remove(p);
                 			checkpointsarena.remove(p);
-                			p.sendMessage(getConfig().getString("strings.left"));
+                			p.sendMessage(getConfig().getString("strings.left").replace("&", "§"));
     					}else{
     						p.sendMessage("§aYou don't seem to be in a course right now!");
     					}
@@ -181,6 +181,7 @@ public class Main extends JavaPlugin implements Listener{
 	    			        	keys.remove("config");
 	    			        	keys.remove("strings");
 	    			        	keys.remove("lobbyspawn");
+	    			        	keys.remove("players");
 	    			        }catch(Exception e){
 	    			        	// do nothing
 	    			        }
@@ -193,12 +194,12 @@ public class Main extends JavaPlugin implements Listener{
     				}else if(action.equalsIgnoreCase("reload")){
     					if(sender.hasPermission("jumper.reload")){
 	    					this.reloadConfig();
-	    					sender.sendMessage(getConfig().getString("strings.reload"));
+	    					sender.sendMessage(getConfig().getString("strings.reload").replace("&", "§"));
     					}else{
-    						sender.sendMessage(getConfig().getString("strings.nopermission"));
+    						sender.sendMessage(getConfig().getString("strings.nopermission").replace("&", "§"));
     					}
     				}else{
-    					sender.sendMessage(getConfig().getString("strings.nothing"));
+    					sender.sendMessage(getConfig().getString("strings.nothing").replace("&", "§"));
     				}
     			}
     		}
@@ -297,13 +298,13 @@ public class Main extends JavaPlugin implements Listener{
             			
             			updateScoreboard();
                 	}
-                }else if(s.getLine(0).toLowerCase().contains("[checkpoint]")){
+                }else if(s.getLine(0).toLowerCase().contains("checkpoint")){
                 	if(arenap.containsKey(event.getPlayer())){
                 		checkpoints.put(event.getPlayer(), event.getPlayer().getLocation());
                 		checkpointsarena.put(event.getPlayer(), arenap.get(event.getPlayer()));
                 		event.getPlayer().sendMessage("§aSuccessfully set checkpoint.");
                 	}else{
-                		
+
                 	}
                 }
 	        }
@@ -329,7 +330,7 @@ public class Main extends JavaPlugin implements Listener{
         	}
         }else if(event.getLine(0).toLowerCase().contains("[cp]")){
         	if(event.getPlayer().hasPermission("jumper.sign")){
-	        	event.setLine(0, "§6§l[Checkpoint]");
+	        	event.setLine(0, "§6§lCheckpoint");
 	        	event.setLine(1, "Click for");
 	        	event.setLine(2, "Checkpoint!");
 	        	event.setLine(3, "/cp to use.");
@@ -368,7 +369,7 @@ public class Main extends JavaPlugin implements Listener{
 				// nothing
 			}else{
 				event.setCancelled(true);
-				event.getPlayer().sendMessage(getConfig().getString("strings.ingame"));
+				event.getPlayer().sendMessage(getConfig().getString("strings.ingame").replace("&", "§"));
 			}
 		}
 	}
