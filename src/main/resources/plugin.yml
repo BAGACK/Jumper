@@ -1,7 +1,7 @@
 name: Jumper
 main: com.comze_instancelabs.simplejumpnrun.Main
 version: 1.0
-author: instancelabs
+author: [instancelabs,mepeisen]
 softdepend: [Vault]
 permissions:
   jumper.*:
