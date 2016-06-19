@@ -110,10 +110,10 @@ public class Main extends JavaPlugin implements Listener{
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args){
 		if(cmd.getName().equalsIgnoreCase("j") || cmd.getName().equalsIgnoreCase("jumper")){
     		if(args.length < 1){
-    			sender.sendMessage(getConfig().getString("strings.help1").replace("&", "§"));
-    			sender.sendMessage(getConfig().getString("strings.help2").replace("&", "§"));
-    			sender.sendMessage(getConfig().getString("strings.help3").replace("&", "§"));
-    			sender.sendMessage(getConfig().getString("strings.help4").replace("&", "§"));
+    			sender.sendMessage(getConfig().getString("strings.help1").replace("&", "Â§"));
+    			sender.sendMessage(getConfig().getString("strings.help2").replace("&", "Â§"));
+    			sender.sendMessage(getConfig().getString("strings.help3").replace("&", "Â§"));
+    			sender.sendMessage(getConfig().getString("strings.help4").replace("&", "Â§"));
     		}else{
     			Player p = (Player)sender;
     			if(args.length > 0){
@@ -125,7 +125,7 @@ public class Main extends JavaPlugin implements Listener{
 	    	    			this.getConfig().set(args[1] + ".world", p.getWorld().getName());
 	    	    			this.saveConfig();
 	    	    			String arenaname = args[1];
-	    	    			sender.sendMessage(getConfig().getString("strings.createcourse").replace("&", "§"));
+	    	    			sender.sendMessage(getConfig().getString("strings.createcourse").replace("&", "Â§"));
     					}
     				}else if(action.equalsIgnoreCase("setmainlobby")){
     					// setlobby
@@ -136,7 +136,7 @@ public class Main extends JavaPlugin implements Listener{
 	    		    		getConfig().set("lobbyspawn.z", (int)l.getZ());
 	    		    		getConfig().set("lobbyspawn.world", p.getWorld().getName());
 	    		    		this.saveConfig();
-	    		    		sender.sendMessage(getConfig().getString("strings.lobbycreated").replace("&", "§"));
+	    		    		sender.sendMessage(getConfig().getString("strings.lobbycreated").replace("&", "Â§"));
     					}
     				}else if(action.equalsIgnoreCase("setspawn") && args.length > 1){
     					// setspawn
@@ -148,14 +148,14 @@ public class Main extends JavaPlugin implements Listener{
     			    		getConfig().set(args[1] + ".spawn.z", (int)l.getZ());
     			    		getConfig().set(args[1] + ".spawn.world", p.getWorld().getName());
     			    		this.saveConfig();
-    			    		sender.sendMessage(getConfig().getString("strings.spawn").replace("&", "§"));
+    			    		sender.sendMessage(getConfig().getString("strings.spawn").replace("&", "Â§"));
     					}
     				}else if(action.equalsIgnoreCase("removecourse") && args.length > 1){
     					// removearena
     					if(p.hasPermission("jumper.remove")){
     						this.getConfig().set(args[1], null);
 	    	    			this.saveConfig();
-	    	    			sender.sendMessage(getConfig().getString("strings.courseremoved").replace("&", "§"));
+	    	    			sender.sendMessage(getConfig().getString("strings.courseremoved").replace("&", "Â§"));
     					}
     				}else if(action.equalsIgnoreCase("leave")){
     					// leave
@@ -167,9 +167,9 @@ public class Main extends JavaPlugin implements Listener{
                 			arenap.remove(p);
                 			checkpoints.remove(p);
                 			checkpointsarena.remove(p);
-                			p.sendMessage(getConfig().getString("strings.left").replace("&", "§"));
+                			p.sendMessage(getConfig().getString("strings.left").replace("&", "Â§"));
     					}else{
-    						p.sendMessage("§aYou don't seem to be in a course right now!");
+    						p.sendMessage("Â§aYou don't seem to be in a course right now!");
     					}
     					//}
     				}else if(action.equalsIgnoreCase("list")){
@@ -187,19 +187,19 @@ public class Main extends JavaPlugin implements Listener{
 	    			        }
 	    			        for(int i = 0; i < keys.size(); i++){
 	    			        	if(!keys.get(i).equalsIgnoreCase("config") && !keys.get(i).equalsIgnoreCase("strings")){
-	    			        		sender.sendMessage("§2" + keys.get(i));
+	    			        		sender.sendMessage("Â§2" + keys.get(i));
 	    			        	}
 	    			        }
     					}
     				}else if(action.equalsIgnoreCase("reload")){
     					if(sender.hasPermission("jumper.reload")){
 	    					this.reloadConfig();
-	    					sender.sendMessage(getConfig().getString("strings.reload").replace("&", "§"));
+	    					sender.sendMessage(getConfig().getString("strings.reload").replace("&", "Â§"));
     					}else{
-    						sender.sendMessage(getConfig().getString("strings.nopermission").replace("&", "§"));
+    						sender.sendMessage(getConfig().getString("strings.nopermission").replace("&", "Â§"));
     					}
     				}else{
-    					sender.sendMessage(getConfig().getString("strings.nothing").replace("&", "§"));
+    					sender.sendMessage(getConfig().getString("strings.nothing").replace("&", "Â§"));
     				}
     			}
     		}
@@ -216,11 +216,11 @@ public class Main extends JavaPlugin implements Listener{
 	    			Bukkit.getScheduler().runTaskLater(this, new Runnable(){
 	    				public void run() {
 	    					p.teleport(checkpoints.get(p));
-	    					p.sendMessage("§7You were teleported to your checkpoint.");
+	    					p.sendMessage("Â§7You were teleported to your checkpoint.");
 	    				}
 	    			}, 5L);
 	    		}else{ 
-	    			p.sendMessage("§cI can't find any checkpoints in my memory.. sowwy >.<");
+	    			p.sendMessage("Â§cI can't find any checkpoints in my memory.. sowwy >.<");
 	    		}
     		}
     		return true;
@@ -268,7 +268,7 @@ public class Main extends JavaPlugin implements Listener{
 	            if(getConfig().contains("player." + event.getPlayer().getName())){
 	            	//TODO get date and if 24h cooldown true or false
 	            }
-                if (s.getLine(0).equalsIgnoreCase("§lJumper"))
+                if (s.getLine(0).equalsIgnoreCase("Â§lJumper"))
                 {
                 	String arena = s.getLine(1);
                 	arena = arena.substring(2);
@@ -276,18 +276,18 @@ public class Main extends JavaPlugin implements Listener{
                 	
                 	arenap.put(event.getPlayer(), arena);
                 	
-                	event.getPlayer().sendMessage("§7You have entered " + arena + "!");
+                	event.getPlayer().sendMessage("Â§7You have entered " + arena + "!");
                 	
                 	final Location t = new Location(Bukkit.getWorld(getConfig().getString(arena + ".spawn.world")), getConfig().getDouble(arena + ".spawn.x"), getConfig().getDouble(arena + ".spawn.y"), getConfig().getDouble(arena + ".spawn.z"));
         			event.getPlayer().teleport(t);
-                }else if(s.getLine(0).equalsIgnoreCase("§2[reward]")){
+                }else if(s.getLine(0).equalsIgnoreCase("Â§2[reward]")){
                 	if(arenap.containsKey(event.getPlayer())){
                 		EconomyResponse r = econ.depositPlayer(event.getPlayer().getName(), Double.parseDouble(s.getLine(1)));
             			if(!r.transactionSuccess()) {
             				event.getPlayer().sendMessage(String.format("An error occured: %s", r.errorMessage));
                             //sender.sendMessage(String.format("You were given %s and now have %s", econ.format(r.amount), econ.format(r.balance)));
                         }
-	                	event.getPlayer().sendMessage("§7Congratulations you beat the course, here's your reward!");
+	                	event.getPlayer().sendMessage("Â§7Congratulations you beat the course, here's your reward!");
 	                	Player p = event.getPlayer();
 	                	String arena = arenap.get(p);
 						final Location t = new Location(Bukkit.getWorld(getConfig().getString("lobbyspawn.world")), getConfig().getDouble("lobbyspawn.x"), getConfig().getDouble("lobbyspawn.y"), getConfig().getDouble("lobbyspawn.z"));
@@ -302,7 +302,7 @@ public class Main extends JavaPlugin implements Listener{
                 	if(arenap.containsKey(event.getPlayer())){
                 		checkpoints.put(event.getPlayer(), event.getPlayer().getLocation());
                 		checkpointsarena.put(event.getPlayer(), arenap.get(event.getPlayer()));
-                		event.getPlayer().sendMessage("§aSuccessfully set checkpoint.");
+                		event.getPlayer().sendMessage("Â§aSuccessfully set checkpoint.");
                 	}else{
 
                 	}
@@ -317,24 +317,24 @@ public class Main extends JavaPlugin implements Listener{
         Player p = event.getPlayer();
         if(event.getLine(0).toLowerCase().contains("[jumper]")){
         	if(event.getPlayer().hasPermission("jumper.sign")){
-	        	event.setLine(0, "§lJumper");
+	        	event.setLine(0, "Â§lJumper");
 	        	if(!event.getLine(1).equalsIgnoreCase("")){
 	        		String arena = event.getLine(1);
-	        		event.setLine(1, "§5" +  arena);
+	        		event.setLine(1, "Â§5" +  arena);
 	        	}
         	}
         }else if(event.getLine(0).toLowerCase().contains("[reward]")){
         	if(event.getPlayer().hasPermission("jumper.sign")){
-	        	event.setLine(0, "§2[Reward]");
-	        	event.getPlayer().sendMessage("§2You have successfully created a reward sign for jumper!");
+	        	event.setLine(0, "Â§2[Reward]");
+	        	event.getPlayer().sendMessage("Â§2You have successfully created a reward sign for jumper!");
         	}
         }else if(event.getLine(0).toLowerCase().contains("[cp]")){
         	if(event.getPlayer().hasPermission("jumper.sign")){
-	        	event.setLine(0, "§6§lCheckpoint");
+	        	event.setLine(0, "Â§6Â§lCheckpoint");
 	        	event.setLine(1, "Click for");
 	        	event.setLine(2, "Checkpoint!");
 	        	event.setLine(3, "/cp to use.");
-	        	event.getPlayer().sendMessage("§2You have successfully created a checkpoint sign for jumper!");
+	        	event.getPlayer().sendMessage("Â§2You have successfully created a checkpoint sign for jumper!");
         	}
         }
 	}
@@ -369,7 +369,7 @@ public class Main extends JavaPlugin implements Listener{
 				// nothing
 			}else{
 				event.setCancelled(true);
-				event.getPlayer().sendMessage(getConfig().getString("strings.ingame").replace("&", "§"));
+				event.getPlayer().sendMessage(getConfig().getString("strings.ingame").replace("&", "Â§"));
 			}
 		}
 	}
@@ -386,22 +386,22 @@ public class Main extends JavaPlugin implements Listener{
 	    	Objective objective = board.registerNewObjective("test", "dummy");
 	        objective.setDisplaySlot(DisplaySlot.SIDEBAR);
 
-	        objective.setDisplayName("§l§7SeekCraft!");
+	        objective.setDisplayName("Â§lÂ§7SeekCraft!");
 	        
 	        
-	        objective.getScore(Bukkit.getOfflinePlayer("§l§9MONEY:")).setScore(20);
+	        objective.getScore(Bukkit.getOfflinePlayer("Â§lÂ§9MONEY:")).setScore(20);
 	        objective.getScore(Bukkit.getOfflinePlayer("" + (int)Math.round(econ.getBalance(p.getName())))).setScore(19);
 	        objective.getScore(Bukkit.getOfflinePlayer("  ")).setScore(18);
-	        objective.getScore(Bukkit.getOfflinePlayer("§l§aONLINE:")).setScore(17);
-	        objective.getScore(Bukkit.getOfflinePlayer("" + getServer().getOnlinePlayers().length)).setScore(16);
+	        objective.getScore(Bukkit.getOfflinePlayer("Â§lÂ§aONLINE:")).setScore(17);
+	        objective.getScore(Bukkit.getOfflinePlayer("" + getServer().getOnlinePlayers().size())).setScore(16);
 	        objective.getScore(Bukkit.getOfflinePlayer(" ")).setScore(15);
-	        objective.getScore(Bukkit.getOfflinePlayer("§l§eGame Types")).setScore(14);
-	        objective.getScore(Bukkit.getOfflinePlayer("§c/survival")).setScore(13);
-	        objective.getScore(Bukkit.getOfflinePlayer("§c/creative")).setScore(12);
-	        objective.getScore(Bukkit.getOfflinePlayer("§c/minigames")).setScore(11);
-	        objective.getScore(Bukkit.getOfflinePlayer("§c/jump")).setScore(10);
+	        objective.getScore(Bukkit.getOfflinePlayer("Â§lÂ§eGame Types")).setScore(14);
+	        objective.getScore(Bukkit.getOfflinePlayer("Â§c/survival")).setScore(13);
+	        objective.getScore(Bukkit.getOfflinePlayer("Â§c/creative")).setScore(12);
+	        objective.getScore(Bukkit.getOfflinePlayer("Â§c/minigames")).setScore(11);
+	        objective.getScore(Bukkit.getOfflinePlayer("Â§c/jump")).setScore(10);
 	        objective.getScore(Bukkit.getOfflinePlayer("   ")).setScore(9);
-	        objective.getScore(Bukkit.getOfflinePlayer("§l§aJUMP MAPS:")).setScore(8);
+	        objective.getScore(Bukkit.getOfflinePlayer("Â§lÂ§aJUMP MAPS:")).setScore(8);
 	        objective.getScore(Bukkit.getOfflinePlayer(Integer.toString(getPlayerArenaCount(p.getName())) + "/" + c)).setScore(7);
 	        
 	        p.setScoreboard(board);
