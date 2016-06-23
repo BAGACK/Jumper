@@ -1,4 +1,4 @@
-name: Jumper
+name: MGJumper
 main: com.comze_instancelabs.simplejumpnrun.Main
 version: ${minigames.releaseversion}-${minigames.timestamp}
 author: [instancelabs,mepeisen]
