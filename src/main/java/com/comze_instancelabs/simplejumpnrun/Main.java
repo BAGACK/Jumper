@@ -41,6 +41,9 @@ import org.bukkit.scoreboard.Score;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.ScoreboardManager;
 
+import com.comze_instancelabs.minigamesapi.MinecraftVersionsType;
+import com.comze_instancelabs.minigamesapi.MinigamesAPI;
+
 
 public class Main extends JavaPlugin implements Listener{
 	
@@ -388,21 +391,40 @@ public class Main extends JavaPlugin implements Listener{
 
 	        objective.setDisplayName("§l§7SeekCraft!");
 	        
-	        
-	        objective.getScore("§l§9MONEY:").setScore(20);
-	        objective.getScore("" + (int)Math.round(econ.getBalance(p.getName()))).setScore(19);
-	        objective.getScore("  ").setScore(18);
-	        objective.getScore("§l§aONLINE:").setScore(17);
-	        objective.getScore("" + getServer().getOnlinePlayers().size()).setScore(16);
-	        objective.getScore(" ").setScore(15);
-	        objective.getScore("§l§eGame Types").setScore(14);
-	        objective.getScore("§c/survival").setScore(13);
-	        objective.getScore("§c/creative").setScore(12);
-	        objective.getScore("§c/minigames").setScore(11);
-	        objective.getScore("§c/jump").setScore(10);
-	        objective.getScore("   ").setScore(9);
-	        objective.getScore("§l§aJUMP MAPS:").setScore(8);
-	        objective.getScore(Integer.toString(getPlayerArenaCount(p.getName())) + "/" + c).setScore(7);
+	        if (MinigamesAPI.SERVER_VERSION.isBelow(MinecraftVersionsType.V1_8))
+	        {
+		        objective.getScore(Bukkit.getOfflinePlayer("§l§9MONEY:")).setScore(20);
+		        objective.getScore(Bukkit.getOfflinePlayer("" + (int)Math.round(econ.getBalance(p.getName())))).setScore(19);
+		        objective.getScore(Bukkit.getOfflinePlayer("  ")).setScore(18);
+		        objective.getScore(Bukkit.getOfflinePlayer("§l§aONLINE:")).setScore(17);
+		        objective.getScore(Bukkit.getOfflinePlayer("" + getServer().getOnlinePlayers().size())).setScore(16);
+		        objective.getScore(Bukkit.getOfflinePlayer(" ")).setScore(15);
+		        objective.getScore(Bukkit.getOfflinePlayer("§l§eGame Types")).setScore(14);
+		        objective.getScore(Bukkit.getOfflinePlayer("§c/survival")).setScore(13);
+		        objective.getScore(Bukkit.getOfflinePlayer("§c/creative")).setScore(12);
+		        objective.getScore(Bukkit.getOfflinePlayer("§c/minigames")).setScore(11);
+		        objective.getScore(Bukkit.getOfflinePlayer("§c/jump")).setScore(10);
+		        objective.getScore(Bukkit.getOfflinePlayer("   ")).setScore(9);
+		        objective.getScore(Bukkit.getOfflinePlayer("§l§aJUMP MAPS:")).setScore(8);
+		        objective.getScore(Bukkit.getOfflinePlayer(Integer.toString(getPlayerArenaCount(p.getName())) + "/" + c)).setScore(7);
+	        }
+	        else
+	        {
+		        objective.getScore("§l§9MONEY:").setScore(20);
+		        objective.getScore("" + (int)Math.round(econ.getBalance(p.getName()))).setScore(19);
+		        objective.getScore("  ").setScore(18);
+		        objective.getScore("§l§aONLINE:").setScore(17);
+		        objective.getScore("" + getServer().getOnlinePlayers().size()).setScore(16);
+		        objective.getScore(" ").setScore(15);
+		        objective.getScore("§l§eGame Types").setScore(14);
+		        objective.getScore("§c/survival").setScore(13);
+		        objective.getScore("§c/creative").setScore(12);
+		        objective.getScore("§c/minigames").setScore(11);
+		        objective.getScore("§c/jump").setScore(10);
+		        objective.getScore("   ").setScore(9);
+		        objective.getScore("§l§aJUMP MAPS:").setScore(8);
+		        objective.getScore(Integer.toString(getPlayerArenaCount(p.getName())) + "/" + c).setScore(7);
+	        }
 	        
 	        p.setScoreboard(board);
 	    }
