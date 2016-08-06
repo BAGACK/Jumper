@@ -379,6 +379,10 @@ public class Main extends JavaPlugin implements Listener{
 	
 	
 	public void updateScoreboard(){
+		if (true) return;
+		// TODO skipped, it is currently only a dummy
+		// in next version there will be a review.
+		
 		ScoreboardManager manager = Bukkit.getScoreboardManager();
 	    
 		String c = Integer.toString(getArenaCount());
