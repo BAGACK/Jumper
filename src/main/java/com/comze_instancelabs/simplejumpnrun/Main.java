@@ -123,7 +123,7 @@ public class Main extends JavaPlugin implements Listener{
     				String action = args[0];
     				if(action.equalsIgnoreCase("createcourse") && args.length > 1){
     					// Create arena
-    					if(p.hasPermission("jumper.create")){
+    					if(p.hasPermission(MinigamesAPI.getAPI().getPermissionGamePrefix("jumper") + ".create")){
     						this.getConfig().set(args[1] + ".name", args[1]);
 	    	    			this.getConfig().set(args[1] + ".world", p.getWorld().getName());
 	    	    			this.saveConfig();
@@ -132,7 +132,7 @@ public class Main extends JavaPlugin implements Listener{
     					}
     				}else if(action.equalsIgnoreCase("setmainlobby")){
     					// setlobby
-    					if(p.hasPermission("jumper.setlobby")){
+    					if(p.hasPermission(MinigamesAPI.getAPI().getPermissionGamePrefix("jumper") + ".setlobby")){
 	    		    		Location l = p.getLocation();
 	    		    		getConfig().set("lobbyspawn.x", (int)l.getX());
 	    		    		getConfig().set("lobbyspawn.y", (int)l.getY());
@@ -143,7 +143,7 @@ public class Main extends JavaPlugin implements Listener{
     					}
     				}else if(action.equalsIgnoreCase("setspawn") && args.length > 1){
     					// setspawn
-    					if(p.hasPermission("jumper.setspawn")){
+    					if(p.hasPermission(MinigamesAPI.getAPI().getPermissionGamePrefix("jumper") + ".setspawn")){
     						String arena = args[1];
     			    		Location l = p.getLocation();
     			    		getConfig().set(args[1] + ".spawn.x", (int)l.getX());
@@ -155,14 +155,14 @@ public class Main extends JavaPlugin implements Listener{
     					}
     				}else if(action.equalsIgnoreCase("removecourse") && args.length > 1){
     					// removearena
-    					if(p.hasPermission("jumper.remove")){
+    					if(p.hasPermission(MinigamesAPI.getAPI().getPermissionGamePrefix("jumper") + ".remove")){
     						this.getConfig().set(args[1], null);
 	    	    			this.saveConfig();
 	    	    			sender.sendMessage(getConfig().getString("strings.courseremoved").replace("&", "§"));
     					}
     				}else if(action.equalsIgnoreCase("leave")){
     					// leave
-    					//if(p.hasPermission("jumper.leave")){
+    					//if(p.hasPermission(MinigamesAPI.getAPI().getPermissionGamePrefix("jumper") + ".leave")){
     					if(arenap.containsKey(p)){
     						String arena = arenap.get(p);
     						final Location t = new Location(Bukkit.getWorld(getConfig().getString("lobbyspawn.world")), getConfig().getDouble("lobbyspawn.x"), getConfig().getDouble("lobbyspawn.y"), getConfig().getDouble("lobbyspawn.z"));
@@ -177,7 +177,7 @@ public class Main extends JavaPlugin implements Listener{
     					//}
     				}else if(action.equalsIgnoreCase("list")){
     					// list
-    					if(p.hasPermission("jumper.list")){
+    					if(p.hasPermission(MinigamesAPI.getAPI().getPermissionGamePrefix("jumper") + ".list")){
     						ArrayList<String> keys = new ArrayList<String>();
 	    			        keys.addAll(getConfig().getKeys(false));
 	    			        try{
@@ -195,7 +195,7 @@ public class Main extends JavaPlugin implements Listener{
 	    			        }
     					}
     				}else if(action.equalsIgnoreCase("reload")){
-    					if(sender.hasPermission("jumper.reload")){
+    					if(sender.hasPermission(MinigamesAPI.getAPI().getPermissionGamePrefix("jumper") + ".reload")){
 	    					this.reloadConfig();
 	    					sender.sendMessage(getConfig().getString("strings.reload").replace("&", "§"));
     					}else{
@@ -319,7 +319,7 @@ public class Main extends JavaPlugin implements Listener{
     public void onSignChange(SignChangeEvent event) {
         Player p = event.getPlayer();
         if(event.getLine(0).toLowerCase().contains("[jumper]")){
-        	if(event.getPlayer().hasPermission("jumper.sign")){
+        	if(event.getPlayer().hasPermission(MinigamesAPI.getAPI().getPermissionGamePrefix("jumper") + ".sign")){
 	        	event.setLine(0, "§lJumper");
 	        	if(!event.getLine(1).equalsIgnoreCase("")){
 	        		String arena = event.getLine(1);
@@ -327,12 +327,12 @@ public class Main extends JavaPlugin implements Listener{
 	        	}
         	}
         }else if(event.getLine(0).toLowerCase().contains("[reward]")){
-        	if(event.getPlayer().hasPermission("jumper.sign")){
+        	if(event.getPlayer().hasPermission(MinigamesAPI.getAPI().getPermissionGamePrefix("jumper") + ".sign")){
 	        	event.setLine(0, "§2[Reward]");
 	        	event.getPlayer().sendMessage("§2You have successfully created a reward sign for jumper!");
         	}
         }else if(event.getLine(0).toLowerCase().contains("[cp]")){
-        	if(event.getPlayer().hasPermission("jumper.sign")){
+        	if(event.getPlayer().hasPermission(MinigamesAPI.getAPI().getPermissionGamePrefix("jumper") + ".sign")){
 	        	event.setLine(0, "§6§lCheckpoint");
 	        	event.setLine(1, "Click for");
 	        	event.setLine(2, "Checkpoint!");
