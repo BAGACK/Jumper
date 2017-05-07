@@ -1,4 +1,4 @@
-Jumper [![Build Status](http://www.minigameslib.de/build.php?app=Jumper&major=1)](http://www.minigameslib.de/buildref.php?app=Jumper&major=1)
+Jumper [![Build Status](http://www.minigameslib.de/build.png?app=Jumper&major=1)](http://www.minigameslib.de/buildref.php?app=Jumper&major=1)
 =======
 
 Jumper game for spigot-minecraft using [MinigamesAPI](https://github.com/MysticCity/MinigamesAPI).
